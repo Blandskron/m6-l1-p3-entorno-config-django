@@ -1,18 +1,130 @@
 {% extends "base.html" %}
 
-{% block title %}Entorno | Configuración{% endblock %}
-{% block h1 %}Entorno{% endblock %}
+{% block title %}Entorno Virtual | Configuración{% endblock %}
+{% block h1 %}Entornos Virtuales en Python{% endblock %}
+{% block subtitle %}Aprende cómo aislar tus proyectos y manejar dependencias de forma profesional con venv.{% endblock %}
 
 {% block content %}
-  <div class="card">
-    <p><strong>DEBUG (persistido en DB):</strong> <code>{{ debug }}</code></p>
-    <p><strong>ALLOWED_HOSTS (texto demo):</strong> <code>{{ allowed_hosts }}</code></p>
-    <p><strong>Versión app:</strong> <code>{{ version_app }}</code></p>
+<div class="side-by-side">
+  <!-- Panel Izquierdo: Teoría Educativa -->
+  <div class="side-pane">
+    <div class="card" style="height: 100%;">
+      <div class="card-title">
+        <span class="icon">🛡️</span> ¿Por qué usar Entornos Virtuales?
+      </div>
+      <p style="font-size: 0.95rem; margin-bottom: 12px;">
+        Un <strong>entorno virtual</strong> es un directorio auto-contenido que contiene una instalación específica de Python y un conjunto de librerías independientes de las del resto del sistema.
+      </p>
+      
+      <h4 style="color: var(--accent-teal); margin-top: 15px; margin-bottom: 6px;">Ventajas Clave:</h4>
+      <ul style="margin-left: 20px; font-size: 0.9rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 8px;">
+        <li><strong>Aislamiento de Entorno:</strong> Evita conflictos entre dependencias. Si el Proyecto A requiere Django 4.2 y el Proyecto B Django 6.0, los entornos virtuales resuelven esto fácilmente.</li>
+        <li><strong>Estructura Minimalista y Flexible:</strong> Cada entorno virtual pesa pocos megabytes originalmente y solo incluye las librerías estrictamente necesarias para el proyecto.</li>
+        <li><strong>Manejo de Diferentes Versiones:</strong> Puedes tener entornos virtuales que utilicen distintas versiones de Python (3.9, 3.10, 3.11, etc.).</li>
+        <li><strong>Velocidad de Desarrollo:</strong> Al instalar dependencias localmente, los comandos de Django y las pruebas corren en un contexto aislado, limpio de interferencias del sistema global.</li>
+      </ul>
+
+      <h4 style="color: var(--accent-purple); margin-top: 15px; margin-bottom: 6px;">El Peligro de las Instalaciones Globales:</h4>
+      <p style="font-size: 0.9rem; color: var(--text-secondary);">
+        Instalar librerías directamente en el entorno global de tu sistema (usando <code>pip install</code> directamente) ensucia el sistema operativo, requiere privilegios de administrador y puede romper otras herramientas o scripts del sistema al sobreescribir dependencias globales.
+      </p>
+    </div>
   </div>
 
-  <div class="card">
-    <p class="muted">
-      Nota: esta página lee una configuración simple desde el modelo <code>AppSetting</code>.
-    </p>
+  <!-- Panel Derecho: Terminal Interactiva y Estado -->
+  <div class="side-pane">
+    <!-- Panel del Estado del Entorno -->
+    <div class="env-status-panel">
+      <h3 style="font-size: 1rem; color: var(--accent-teal); margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 6px;">
+        🔍 Monitor de Entorno Python (Simulado)
+      </h3>
+      <div class="status-row">
+        <span class="status-label">Estado de Aislamiento:</span>
+        <span id="status-active" class="status-value status-inactive">Inactivo (Global)</span>
+      </div>
+      <div class="status-row">
+        <span class="status-label">Ruta Executable:</span>
+        <span id="status-path" style="font-size: 0.75rem; color: var(--text-secondary);">C:\Python311\python.exe</span>
+      </div>
+      <div class="status-row">
+        <span class="status-label">Entorno Python:</span>
+        <span id="status-python" class="status-value">Python 3.11.4 (Global)</span>
+      </div>
+      <div class="status-row">
+        <span class="status-label">Estado de Django:</span>
+        <span id="status-django" class="status-value status-inactive">No Detectado</span>
+      </div>
+      <div class="status-row">
+        <span class="status-label">Paquetes Instalados:</span>
+        <span id="status-libs" style="font-size: 0.75rem; color: var(--accent-teal);">pip, setuptools</span>
+      </div>
+    </div>
+
+    <!-- Terminal Simulada -->
+    <div class="terminal">
+      <div class="terminal-header">
+        <div class="terminal-buttons">
+          <span class="terminal-btn red"></span>
+          <span class="terminal-btn yellow"></span>
+          <span class="terminal-btn green"></span>
+        </div>
+        <span class="terminal-title">PowerShell - Django Virtual Environment Simulator</span>
+      </div>
+      <div id="terminal-body" class="terminal-body">
+        <!-- Rellenado por main.js -->
+      </div>
+      <div class="terminal-controls">
+        <button id="btn-create-venv" class="btn btn-primary">1. Crear Entorno venv</button>
+        <button id="btn-activate-venv" class="btn">2. Activar Entorno</button>
+        <button id="btn-install-django" class="btn">3. Instalar Django</button>
+        <button id="btn-deactivate-venv" class="btn">4. Desactivar</button>
+        <button id="btn-pip-list" class="btn">pip list</button>
+        <button id="btn-clear-term" class="btn" style="background: transparent; border-color: transparent; color: var(--text-muted);">Limpiar</button>
+      </div>
+    </div>
   </div>
+</div>
+
+<!-- Sección detallada de comandos reales -->
+<div class="info-section">
+  <h2><span class="icon">💻</span> Comandos Reales en la Consola</h2>
+  <p style="color: var(--text-secondary); margin-bottom: 20px;">
+    Sigue esta guía paso a paso para inicializar y controlar un entorno virtual en tu propio computador.
+  </p>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-title">
+        <span class="icon">📦</span> 1. Creación con el comando venv
+      </div>
+      <p style="font-size: 0.9rem;">Para crear un entorno virtual, abres una consola en la raíz de tu proyecto y ejecutas:</p>
+      <pre>python -m venv venv</pre>
+      <p style="font-size: 0.85rem; color: var(--text-secondary);">
+        Esto creará una carpeta llamada <code>venv</code> que contiene copias limpias de los ejecutables de Python y las herramientas básicas de empaquetado.
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span class="icon">⚡</span> 2. Activación
+      </div>
+      <p style="font-size: 0.9rem;">Para indicarle a tu consola que debe usar este entorno aislado:</p>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 5px;">En Windows (PowerShell):</p>
+      <pre>.\venv\Scripts\Activate.ps1</pre>
+      <p style="font-size: 0.85rem; color: var(--text-muted);">En macOS/Linux (Bash/zsh):</p>
+      <pre>source venv/bin/activate</pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span class="icon">🚪</span> 3. Salir (Desactivar)
+      </div>
+      <p style="font-size: 0.9rem;">Cuando termines de trabajar en tu proyecto, puedes salir del entorno virtual escribiendo:</p>
+      <pre>deactivate</pre>
+      <p style="font-size: 0.85rem; color: var(--text-secondary);">
+        Esto restaura inmediatamente las variables de entorno de tu sistema, volviendo al Python global.
+      </p>
+    </div>
+  </div>
+</div>
 {% endblock %}

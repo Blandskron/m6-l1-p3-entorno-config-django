@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block title %}Python vs Django | Comparación{% endblock %}
+{% block h1 %}Python Puro v/s Django Integrado{% endblock %}
+{% block subtitle %}Distingue la complejidad de resolver tareas web con sockets/módulos estándar frente a la simplicidad de Django.{% endblock %}
+
+{% block content %}
+<!-- Alerta teórica -->
+<div class="alert">
+  <span class="alert-icon">⚖️</span>
+  <div class="alert-content">
+    <p><strong>Diferencia de Abstracción:</strong></p>
+    <p style="font-size: 0.9rem; color: var(--text-secondary);">
+      Mientras que en <strong>Python Puro</strong> debes crear el socket de red, leer los bytes del protocolo HTTP, parsear las cabeceras, enrutar manualmente las URLs, y escapar código para prevenir hackeos; 
+      <strong>Django</strong> encapsula toda esta infraestructura de bajo nivel para que te enfoques al 100% en la lógica de negocio de tu aplicación empresarial.
+    </p>
+  </div>
+</div>
+
+<!-- Estructura de Pestañas Comparativas -->
+<div class="tab-container">
+  <div class="tab-headers">
+    <button class="tab-header active" data-tab="tab-servidor">1. Inicializar Servidor</button>
+    <button class="tab-header" data-tab="tab-enrutamiento">2. Enrutamiento (URLs)</button>
+    <button class="tab-header" data-tab="tab-renderizado">3. Renderizar HTML</button>
+    <button class="tab-header" data-tab="tab-db">4. Acceso a Base de Datos</button>
+  </div>
+
+  {% verbatim %}
+  <!-- Contenido: Inicializar Servidor -->
+  <div id="tab-servidor" class="tab-content active">
+    <p style="margin-bottom: 15px; color: var(--text-secondary);">
+      Comparación de cómo montar y arrancar un servidor HTTP básico que escuche en el puerto 8000.
+    </p>
+    <div class="side-by-side">
+      <!-- Python Puro -->
+      <div class="side-pane">
+        <h4><span>🐍 Python Puro</span> <span style="font-size: 0.75rem; color: var(--accent-red);">Complejidad Media</span></h4>
+        <pre><code class="highlight-python">import http.server
+import socketserver
+
+PORT = 8000
+Handler = http.server.SimpleHTTPRequestHandler
+
+# Debes configurar el socket a mano
+with socketserver.TCPServer(("", PORT), Handler) as httpd:
+    print("Servidor en el puerto", PORT)
+    try:
+        # Loop infinito del servidor
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        httpd.server_close()</code></pre>
+      </div>
+      <!-- Django -->
+      <div class="side-pane">
+        <h4><span>💚 Django Integrado</span> <span style="font-size: 0.75rem; color: var(--accent-green);">Abstracción Total</span></h4>
+        <pre><code class="highlight-python"># Todo el arranque lo gestiona manage.py
+# Solo ejecutas el comando en la terminal:
+
+python manage.py runserver
+
+# ¡Y listo! Levanta un servidor de desarrollo
+# con autorecarga de código al guardar,
+# validador de configuración y depuración.</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenido: Enrutamiento -->
+  <div id="tab-enrutamiento" class="tab-content">
+    <p style="margin-bottom: 15px; color: var(--text-secondary);">
+      Cómo dirigir a un usuario a la página de inicio o a la sección "contacto" según la URL solicitada.
+    </p>
+    <div class="side-by-side">
+      <!-- Python Puro -->
+      <div class="side-pane">
+        <h4><span>🐍 Python Puro</span> <span style="font-size: 0.75rem; color: var(--accent-red);">Estructura Manual</span></h4>
+        <pre><code class="highlight-python">class MyHandler(http.server.BaseHTTPRequestHandler):
+    def do_GET(self):
+        # Debes parsear self.path de forma manual
+        if self.path == "/":
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b"Inicio")
+        elif self.path == "/contacto/":
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b"Contacto")
+        else:
+            self.send_response(404)
+            self.end_headers()
+            self.wfile.write(b"404 No Encontrado")</code></pre>
+      </div>
+      <!-- Django -->
+      <div class="side-pane">
+        <h4><span>💚 Django Integrado</span> <span style="font-size: 0.75rem; color: var(--accent-green);">Enrutamiento Limpio (Decoupled)</span></h4>
+        <pre><code class="highlight-python"># En urls.py definimos las rutas mapeadas
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path("", views.home, name="home"),
+    path("contacto/", views.contacto, name="contacto"),
+]
+
+# Las expresiones regulares o de tipo url 
+# se parsean solas. Si no calza, Django
+# maneja automáticamente el 404 seguro.</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenido: Renderizado -->
+  <div id="tab-renderizado" class="tab-content">
+    <p style="margin-bottom: 15px; color: var(--text-secondary);">
+      Cómo inyectar variables del servidor (como el nombre del usuario) dentro de una plantilla HTML y responderla de forma segura.
+    </p>
+    <div class="side-by-side">
+      <!-- Python Puro -->
+      <div class="side-pane">
+        <h4><span>🐍 Python Puro</span> <span style="font-size: 0.75rem; color: var(--accent-red);">Inseguro y Engorroso</span></h4>
+        <pre><code class="highlight-python">def render_template(user_name):
+    # Leer el archivo HTML a mano
+    with open("templates/home.html", "r", encoding="utf-8") as f:
+        html = f.read()
+    
+    # Reemplazo de texto crudo (vulnerable a XSS!)
+    html_renderizado = html.replace(
+        "{{ name }}", user_name
+    )
+    return html_renderizado.encode("utf-8")</code></pre>
+      </div>
+      <!-- Django -->
+      <div class="side-pane">
+        <h4><span>💚 Django Integrado</span> <span style="font-size: 0.75rem; color: var(--accent-green);">Motor Seguro y Reutilizable</span></h4>
+        <pre><code class="highlight-python"># En views.py
+from django.shortcuts import render
+
+def home(request):
+    # El renderizador lee, compila e inyecta 
+    # las variables de forma 100% segura.
+    # Soporta herencia {% extends "base.html" %}
+    return render(request, "home.html", {
+        "name": user_name
+    })</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenido: Base de Datos -->
+  <div id="tab-db" class="tab-content">
+    <p style="margin-bottom: 15px; color: var(--text-secondary);">
+      Cómo conectarse a una base de datos SQLite y guardar un registro con la fecha de creación.
+    </p>
+    <div class="side-by-side">
+      <!-- Python Puro -->
+      <div class="side-pane">
+        <h4><span>🐍 Python Puro</span> <span style="font-size: 0.75rem; color: var(--accent-red);">SQL e Infraestructura Manual</span></h4>
+        <pre><code class="highlight-python">import sqlite3
+from datetime import datetime
+
+# Debes gestionar conexión y SQL
+conn = sqlite3.connect("db.sqlite3")
+cursor = conn.cursor()
+
+# Si cambias de motor de DB, debes reescribir esto
+cursor.execute("""
+    INSERT INTO registros (origen, creado_en)
+    VALUES (?, ?)
+""", ("python_puro", datetime.now()))
+
+conn.commit()
+conn.close()</code></pre>
+      </div>
+      <!-- Django -->
+      <div class="side-pane">
+        <h4><span>💚 Django Integrado</span> <span style="font-size: 0.75rem; color: var(--accent-green);">Mapeador ORM Independiente</span></h4>
+        <pre><code class="highlight-python"># En models.py declaras la clase Python
+class Registro(models.Model):
+    origen = models.CharField(max_length=50)
+    creado_en = models.DateTimeField(auto_now_add=True)
+
+# Y en tu vista creas el objeto directamente:
+Registro.objects.create(origen="django_orm")
+
+# ¡El ORM escribe el SQL por ti y se adapta 
+# a SQLite, PostgreSQL o MySQL sin tocar el código!</code></pre>
+      </div>
+    </div>
+  </div>
+  {% endverbatim %}
+</div>
+
+<!-- Tabla comparativa final -->
+<div class="info-section">
+  <h2><span class="icon">📊</span> Resumen Comparativo para la Empresa</h2>
+  <table style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.95rem; text-align: left;">
+    <thead>
+      <tr style="border-bottom: 2px solid var(--border-color); color: var(--accent-teal);">
+        <th style="padding: 12px;">Característica</th>
+        <th style="padding: 12px;">Python Puro</th>
+        <th style="padding: 12px;">Django Integrado</th>
+      </tr>
+    </thead>
+    <tbody style="color: var(--text-secondary);">
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 12px; font-weight: 600; color: var(--text-primary);">Velocidad de Salida</td>
+        <td style="padding: 12px;">Lenta. Debes inventar la rueda en cada proyecto.</td>
+        <td style="padding: 12px; color: var(--accent-green);">Ultra Rápida. Listo para crear funcionalidades desde el día uno.</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 12px; font-weight: 600; color: var(--text-primary);">Mantenibilidad</td>
+        <td style="padding: 12px;">Difícil. Estructura personalizada e inconsistente.</td>
+        <td style="padding: 12px; color: var(--accent-green);">Muy Alta. Cualquier desarrollador Django comprende el proyecto.</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 12px; font-weight: 600; color: var(--text-primary);">Seguridad</td>
+        <td style="padding: 12px;">Propensa a errores humanos y vulnerabilidades web.</td>
+        <td style="padding: 12px; color: var(--accent-green);">Excelente. Sanitización automática y middlewares de protección.</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 12px; font-weight: 600; color: var(--text-primary);">Base de Datos</td>
+        <td style="padding: 12px;">Conexiones crudas SQL manuales y migraciones difíciles.</td>
+        <td style="padding: 12px; color: var(--accent-green);">ORM potente y migraciones automáticas versionadas en git.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+{% endblock %}

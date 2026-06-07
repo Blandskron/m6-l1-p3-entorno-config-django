@@ -1,28 +1,109 @@
 {% extends "base.html" %}
 
-{% block title %}DB | Configuración{% endblock %}
-{% block h1 %}DB (ORM + SQLite){% endblock %}
+{% block title %}Base de Datos | Configuración{% endblock %}
+{% block h1 %}Persistencia y ORM de Django{% endblock %}
+{% block subtitle %}Experimenta cómo funciona el mapeador objeto-relacional (ORM) y cómo interactúa Django con SQLite.{% endblock %}
 
 {% block content %}
-  <div class="card">
-    <p><strong>Total registros:</strong> <code>{{ total }}</code></p>
-    <p class="muted">Se crea 1 registro por visita a <code>/db/</code>.</p>
+<div class="sqlite-visor">
+  <!-- Panel Izquierdo: Formularios e Introducción -->
+  <div class="side-pane">
+    <div class="card">
+      <div class="card-title">
+        <span class="icon">🔌</span> Soporte de Base de Datos
+      </div>
+      <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 12px;">
+        Django incluye de fábrica soporte para múltiples bases de datos relacionales como <strong>PostgreSQL, MySQL, SQLite y Oracle</strong>. En este proyecto estamos utilizando <strong>SQLite</strong>, que guarda toda la base de datos en un único archivo local (<code>db.sqlite3</code>).
+      </p>
+      <p style="font-size: 0.9rem; color: var(--text-secondary);">
+        El ORM nos permite interactuar con las tablas usando código Python puro, sin escribir sentencias SQL a mano. Las migraciones controlan y versionan la estructura de la base de datos.
+      </p>
+    </div>
+
+    <!-- Agregar Registro Form -->
+    <div class="card" style="margin-top: 20px;">
+      <div class="card-title">
+        <span class="icon">➕</span> Crear Registro en SQLite
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 15px;">
+        Escribe un origen personalizado para insertar una fila en la base de datos utilizando el ORM de Django.
+      </p>
+      <form method="POST" action="{% url 'configuracion:db' %}">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="origen">Origen del Registro:</label>
+          <input type="text" id="origen" name="origen" class="form-input" placeholder="Ej: Consola, Formulario, Alumno M6" required />
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">
+          Ejecutar Registro.objects.create(...)
+        </button>
+      </form>
+    </div>
+
+    <!-- Panel de Control / Reset -->
+    <div class="card" style="margin-top: 20px;">
+      <div class="card-title">
+        <span class="icon">🧹</span> Limpiar Historial
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 15px;">
+        Haz clic abajo para eliminar todas las filas de la tabla de registros en SQLite.
+      </p>
+      <a href="{% url 'configuracion:db_limpiar' %}" class="btn" style="border-color: var(--accent-red); color: #fca5a5; width: 100%; justify-content: center; text-decoration: none;">
+        Eliminar Todos los Registros
+      </a>
+    </div>
   </div>
 
-  <div class="card">
-    <h3 style="margin-top:0;">Últimos 10</h3>
+  <!-- Panel Derecho: Visor de Datos y SQL ORM -->
+  <div class="side-pane">
+    <!-- El Visor del ORM al SQL -->
+    <div class="card" style="background-color: #0b0f19; border-color: rgba(234, 179, 8, 0.3);">
+      <h3 style="font-size: 1rem; color: #eab308; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+        <span>🔍</span> Visor de Traducción ORM (Detrás de Escena)
+      </h3>
+      <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 10px;">
+        <strong>Código Python (ORM):</strong>
+      </div>
+      <pre style="margin: 0; padding: 10px; background-color: #050b14; font-size: 0.85rem;"><span class="highlight-python">registros = Registro.objects.order_by(</span><span style="color: #a855f7;">'-creado_en'</span><span class="highlight-python">)[:10]</span></pre>
+      
+      <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 15px; margin-bottom: 10px;">
+        <strong>SQL Generado y Ejecutado en SQLite:</strong>
+      </div>
+      <pre style="margin: 0; padding: 10px; background-color: #050b14; font-size: 0.85rem; border-color: rgba(234, 179, 8, 0.2); overflow-x: auto;"><code class="highlight-sql">{{ sql_query }}</code></pre>
+    </div>
 
-    {% if registros %}
-      <ul>
-        {% for r in registros %}
-          <li>
-            <strong>{{ r.origen }}</strong>
-            <span class="muted">— {{ r.creado_en }}</span>
-          </li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <p class="muted">Aún no hay registros.</p>
-    {% endif %}
+    <!-- Lista de Registros -->
+    <div class="card" style="margin-top: 20px;">
+      <div class="card-title" style="justify-content: space-between;">
+        <span><span class="icon">📊</span> Registros en DB</span>
+        <span style="font-size: 0.8rem; background-color: rgba(6, 182, 212, 0.1); color: var(--accent-teal); padding: 2px 8px; border-radius: 20px;">
+          Total: {{ total }}
+        </span>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 15px;">
+        Últimos 10 registros persistidos en SQLite (ordenados del más reciente al más antiguo):
+      </p>
+
+      {% if registros %}
+        <ul class="record-list">
+          {% for r in registros %}
+            <li class="record-item">
+              <div class="record-info">
+                <span class="record-origin">{{ r.origen }}</span>
+                <span class="record-date">ID: #{{ r.id }} | Creado: {{ r.creado_en|date:"H:i:s" }} - {{ r.creado_en|date:"d/m/Y" }}</span>
+              </div>
+              <span style="font-size: 0.75rem; background-color: #334155; color: var(--text-secondary); padding: 4px 8px; border-radius: 4px;">
+                SQLite OK
+              </span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <div style="text-align: center; padding: 30px; color: var(--text-muted); font-size: 0.9rem;">
+          No hay registros en la base de datos.
+        </div>
+      {% endif %}
+    </div>
   </div>
+</div>
 {% endblock %}

@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: django_educativo_container
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./entorno_config_django:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    restart: unless-stopped

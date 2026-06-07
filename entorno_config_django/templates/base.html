@@ -1,35 +1,49 @@
+{% load static %}
 <!doctype html>
 <html lang="es">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>{% block title %}Django Config{% endblock %}</title>
-
-    <style>
-      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; }
-      header, main { max-width: 980px; margin: 0 auto; padding: 16px; }
-      header { border-bottom: 1px solid #e5e7eb; }
-      nav a { margin-right: 12px; text-decoration: none; }
-      code, pre { background: #f3f4f6; padding: 2px 6px; border-radius: 6px; }
-      .card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px; margin: 12px 0; }
-      .muted { color: #6b7280; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}Django Educativo{% endblock %}</title>
+    
+    <!-- Google Fonts: Outfit (modern sans-serif) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'configuracion/css/styles.css' %}" />
   </head>
 
   <body>
     <header>
-      <div class="muted">Aplicación 2 — Entorno, configuración y buenas prácticas</div>
-      <h1 style="margin: 8px 0;">{% block h1 %}Django Config{% endblock %}</h1>
-
-      <nav>
-        <a href="{% url 'configuracion:home' %}">Inicio</a>
-        <a href="{% url 'configuracion:entorno' %}">Entorno</a>
-        <a href="{% url 'configuracion:db' %}">DB</a>
-      </nav>
+      <div class="header-container">
+        <div class="logo">
+          <span class="logo-badge">DJANGO M6</span>
+          <span class="logo-title">Entorno & Configuración</span>
+        </div>
+        
+        <nav>
+          <!-- Se determina la clase active de forma dinámica o mediante JavaScript simple, 
+               o comparando la URL actual con las rutas del proyecto -->
+          <a href="{% url 'configuracion:home' %}" class="{% if request.resolver_match.view_name == 'configuracion:home' %}active{% endif %}">Inicio</a>
+          <a href="{% url 'configuracion:entorno' %}" class="{% if request.resolver_match.view_name == 'configuracion:entorno' %}active{% endif %}">Entorno Virtual</a>
+          <a href="{% url 'configuracion:python_vs_django' %}" class="{% if request.resolver_match.view_name == 'configuracion:python_vs_django' %}active{% endif %}">Python vs Django</a>
+          <a href="{% url 'configuracion:db' %}" class="{% if request.resolver_match.view_name == 'configuracion:db' %}active{% endif %}">Base de Datos (ORM)</a>
+        </nav>
+      </div>
     </header>
 
     <main>
+      <div class="page-header">
+        <h1>{% block h1 %}Título de Página{% endblock %}</h1>
+        <p class="page-subtitle">{% block subtitle %}Descripción de la sección educativa.{% endblock %}</p>
+      </div>
+
       {% block content %}{% endblock %}
     </main>
+
+    <!-- Custom JS -->
+    <script src="{% static 'configuracion/js/main.js' %}"></script>
   </body>
 </html>

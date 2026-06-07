@@ -1,334 +1,85 @@
-# docs.md — Aplicación 2: Entorno, configuración y buenas prácticas en Django
+# Documentación General: Entorno, Configuración y Buenas Prácticas en Django
 
-Proyecto: **entorno_config_django**  
-Aplicación: **configuracion**
-
-Este documento describe **qué hace cada parte del proyecto y por qué existe**, siguiendo exactamente lo que fue implementado.
+Este documento describe **qué hace cada parte del proyecto y por qué existe**, detallando los componentes educativos e interactivos agregados para el cumplimiento del 100% de la lección.
 
 ---
 
-## 1. Estructura general del proyecto
+## 1. Estructura Completa del Proyecto
+
+El proyecto está organizado de la siguiente manera:
 
 ```
-
 entorno_config_django/
-├─ venv/
-├─ entorno_config_django/
-│  ├─ entorno_config_django/
-│  │  ├─ settings.py
-│  │  ├─ urls.py
+├─ venv/                            # Entorno virtual aislado (creado localmente)
+├─ entorno_config_django/           # Raíz del proyecto Django
+│  ├─ db.sqlite3                    # Base de datos SQLite local
+│  ├─ manage.py                     # Script de gestión del proyecto
+│  ├─ requirements.txt              # Archivo de dependencias del proyecto
+│  │
+│  ├─ entorno_config_django/        # Configuración Global del Proyecto
+│  │  ├─ settings.py                # Variables de configuración (apps, DB, templates, static)
+│  │  ├─ urls.py                    # Enrutador principal de la aplicación web
 │  │  └─ ...
-│  ├─ configuracion/
-│  │  ├─ models.py
-│  │  ├─ views.py
-│  │  ├─ urls.py
+│  │
+│  ├─ configuracion/                # Aplicación Educativa
+│  │  ├─ static/
+│  │  │  └─ configuracion/
+│  │  │     ├─ css/
+│  │  │     │  └─ styles.css        # Estilos Premium (Dark-Slate, Glassmorphism, Terminal)
+│  │  │     └─ js/
+│  │  │        └─ main.js           # Lógica interactiva (Simulador de Terminal, Pestañas)
+│  │  ├─ migrations/
+│  │  │  └─ 0001_initial.py         # Archivo de migración de la base de datos
+│  │  ├─ models.py                  # Modelos de datos (AppSetting, Registro)
+│  │  ├─ urls.py                    # Enrutador específico de la aplicación configuracion
+│  │  ├─ views.py                   # Lógica de las vistas y extracción de SQL ORM
 │  │  └─ ...
-│  ├─ templates/
-│  │  ├─ base.html
-│  │  └─ configuracion/
-│  │     ├─ home.html
-│  │     ├─ entorno.html
-│  │     └─ db.html
-│  └─ manage.py
-
-```
-
-La estructura separa claramente:
-
-- Configuración global del proyecto
-- Lógica de la aplicación
-- Templates reutilizables
-- Entorno virtual aislado
-
----
-
-## 2. Entorno virtual (`venv`)
-
-El entorno virtual contiene **todas las dependencias del proyecto**.
-
-Características:
-- Aísla Django y sus librerías de otros proyectos
-- Permite usar versiones específicas de Django
-- Evita conflictos con instalaciones globales
-- Hace el proyecto reproducible
-
-Dentro del entorno virtual:
-- `python`
-- `pip`
-- `django`
-pertenecen **solo a este proyecto**
-
----
-
-## 3. Proyecto Django (`entorno_config_django`)
-
-El proyecto representa la **configuración global** de la aplicación web.
-
-### `settings.py`
-
-Archivo central de configuración.
-
-En este proyecto se usa para:
-- Registrar aplicaciones (`INSTALLED_APPS`)
-- Definir templates globales (`TEMPLATES['DIRS']`)
-- Centralizar configuración del entorno
-
-El proyecto **no contiene lógica de negocio**, solo configuración.
-
----
-
-### `urls.py` (proyecto)
-
-Responsabilidad:
-- Definir el **enrutador principal**
-- Delegar rutas a las aplicaciones
-
-Aquí se conecta la app `configuracion` al proyecto.
-
-Flujo:
-```
-
-URL → urls.py (proyecto) → urls.py (app) → view
-
+│  │
+│  └─ templates/                    # Capa de Presentación (HTML Templates)
+│     ├─ base.html                  # Layout base (Google Fonts, navegación, carga estáticos)
+│     └─ configuracion/
+│        ├─ home.html               # Página de Inicio (Teoría de Django, MTV, DRY)
+│        ├─ entorno.html            # Entornos Virtuales + Simulador interactivo de consola
+│        ├─ db.html                 # SQLite + Visor de código ORM a consulta SQL real
+│        └─ python_vs_django.html   # Comparador lado a lado de código Python v/s Django
 ```
 
 ---
 
-## 4. Aplicación `configuracion`
+## 2. Descripción de Componentes Clave
 
-La app representa un **módulo funcional independiente**.
+### A. Estilos y Presentación (`styles.css` & `base.html`)
+* **`base.html`**: Funciona como plantilla maestra implementando el principio DRY. Define la estructura HTML común, carga las tipografías modernas ("Outfit" y "Fira Code" para el visor de código) e integra de forma dinámica los archivos CSS y JS usando la etiqueta de Django `{% load static %}`.
+* **`styles.css`**: Establece un diseño premium oscuro (Slate-Dark) con contrastes neón, transiciones suaves y layouts responsivos con CSS Grid/Flexbox. Incluye estilos personalizados para simular una terminal de comandos (estilo macOS/Linux con botones de control) y visores de código estilo IDE.
 
-Su objetivo es mostrar:
-- Configuración
-- Entorno
-- ORM
-- Buenas prácticas
+### B. Interactividad y Simulación (`main.js`)
+* **Simulador de Entorno Virtual**: Mantiene el estado interno de un entorno Python virtual (si está creado, si está activo, qué dependencias tiene instaladas). Permite al estudiante hacer clic en botones de consola para ejecutar comandos reales paso a paso (`python -m venv venv`, activar, `pip install django`, `pip list`, `deactivate`) y observar en tiempo real cómo cambia el prompt de la terminal y el árbol de dependencias del proyecto.
+* **Mapeo de Pestañas**: Permite cambiar dinámicamente entre las diferentes lecciones de código en la vista "Python Puro v/s Django".
 
----
+### C. Lógica de Negocio y Vistas (`views.py`)
+* **`home`**: Renderiza el Dashboard introductorio. Provee datos dinámicos sobre la configuración del servidor local (versión del software, modo DEBUG activo/inactivo).
+* **`entorno`**: Expone la teoría fundamental de entornos virtuales y configura el espacio de simulación.
+* **`python_vs_django`**: Nueva vista agregada para responder al objetivo de distinguir el desarrollo web en Python nativo frente al integrado con Django.
+* **`db`**: Gestiona las operaciones de persistencia en SQLite mediante el ORM de Django:
+  - Guarda una traza de visita automática.
+  - Permite la inserción manual de registros a través de un formulario web que incluye el middleware de protección contra ataques CSRF (`{% csrf_token %}`).
+  - Extrae y muestra la consulta SQL cruda que Django traduce de forma interna utilizando `str(query.query)`.
+* **`db_limpiar`**: Elimina todas las filas de registros para reiniciar la simulación del visor de persistencia.
 
-### `configuracion/urls.py`
-
-Define las rutas internas de la app:
-
-- `/` → home
-- `/entorno/` → entorno
-- `/db/` → base de datos
-
-Este archivo desacopla rutas del proyecto principal.
-
----
-
-## 5. Vistas (`views.py`)
-
-Las vistas son el **controlador lógico** del patrón MTV.
-
-### `home`
-
-- Renderiza una página índice
-- No accede a base de datos
-- Solo entrega contexto básico al template
+### D. Modelos y Persistencia (`models.py`)
+* **`AppSetting`**: Modelo singleton que simula y centraliza variables de configuración (DEBUG, ALLOWED_HOSTS, versión) persistidas en base de datos.
+* **`Registro`**: Representa la entidad en base de datos donde se persisten los registros del origen y la fecha de creación (`creado_en` con fecha/hora automáticas).
 
 ---
 
-### `entorno`
+## 3. Demostración Práctica de Conceptos Clave
 
-- Lee configuración persistida en base de datos
-- Demuestra centralización de configuración
-- Expone variables al template
+El proyecto está diseñado para que el alumno observe visualmente:
 
-Conceptos involucrados:
-- Separación de configuración y presentación
-- Lectura de datos desde modelos
-- Uso de contexto en renderización
-
----
-
-### `db`
-
-- Usa el ORM de Django
-- Inserta datos automáticamente
-- Consulta datos persistidos
-- Devuelve resultados al template
-
-Demuestra:
-- Persistencia en SQLite
-- ORM sin SQL explícito
-- Migraciones funcionando
-
----
-
-## 6. Modelos (`models.py`)
-
-Los modelos representan la **capa de datos**.
-
----
-
-### `AppSetting`
-
-Modelo de configuración persistida.
-
-Propósito:
-- Centralizar valores de configuración
-- Evitar hardcodear valores en vistas
-- Demostrar configuración reutilizable
-
-Características:
-- Singleton controlado (`get_singleton`)
-- Simula variables como DEBUG y ALLOWED_HOSTS
-- Persistido en SQLite
-
----
-
-### `Registro`
-
-Modelo simple de registro.
-
-Propósito:
-- Demostrar uso del ORM
-- Mostrar persistencia real
-- Facilitar pruebas de migraciones
-
-Cada visita a `/db/` crea un registro nuevo.
-
----
-
-## 7. Base de datos (SQLite)
-
-Base de datos usada:
-- SQLite (por defecto de Django)
-
-Características:
-- No requiere instalación adicional
-- Ideal para desarrollo
-- Integración automática con Django
-
-Las migraciones:
-- Crean tablas
-- Versionan cambios del modelo
-- Mantienen consistencia del esquema
-
----
-
-## 8. Templates
-
-Los templates representan la **capa de presentación**.
-
----
-
-### `templates/base.html`
-
-Template base reutilizable.
-
-Responsabilidades:
-- Estructura HTML común
-- Navegación
-- Estilos básicos
-- Definición de bloques
-
-Aplica:
-- DRY (no repetir HTML)
-- Herencia de templates
-
----
-
-### `home.html`
-
-- Hereda de `base.html`
-- Página índice
-- Navegación interna
-
----
-
-### `entorno.html`
-
-- Muestra datos dinámicos
-- Usa variables de contexto
-- Demuestra renderización de configuración
-
----
-
-### `db.html`
-
-- Usa `{% if %}` y `{% for %}`
-- Renderiza listas de datos
-- Muestra interacción ORM → template
-
----
-
-## 9. DRY (Don’t Repeat Yourself)
-
-Aplicado en:
-- Template base compartido
-- Centralización de configuración
-- Reutilización de vistas y layouts
-- Un solo punto de verdad para estilos y navegación
-
----
-
-## 10. Flujo completo de una petición
-
-Ejemplo: `/db/`
-
-```
-
-Navegador
-↓
-urls.py (proyecto)
-↓
-urls.py (configuracion)
-↓
-views.db
-↓
-models.Registro
-↓
-SQLite
-↓
-contexto
-↓
-template db.html
-↓
-HTTP Response
-
-```
-
----
-
-## 11. Entorno desarrollo vs ejecución
-
-Este proyecto está en **modo desarrollo**:
-
-- `DEBUG` activo (simulado)
-- SQLite
-- runserver
-- Sin optimizaciones de producción
-
-Permite:
-- Iterar rápido
-- Observar errores
-- Analizar comportamiento interno
-
----
-
-## 12. Qué demuestra el proyecto
-
-- Preparación correcta de un entorno Django
-- Uso de entornos virtuales
-- Configuración centralizada
-- Separación proyecto / app
-- ORM y migraciones
-- Templates y herencia
-- DRY aplicado de forma práctica
-- Flujo real de ejecución en Django
-
----
-
-## 13. Alcance intencional
-
-Este proyecto **no incluye**:
-- Autenticación
-- Formularios complejos
-- APIs
-- Producción real
-
-El foco es:
-> Entorno, configuración y buenas prácticas estructurales en Django.
+1. **El Enrutador de Django**: Siguiendo el mapa de URL desde `entorno_config_django/urls.py` hacia `configuracion/urls.py`, y de ahí a la función correspondiente en `views.py`.
+2. **La Arquitectura MTV**:
+   - **Model**: Clases de Python en `models.py` mapeadas a la DB local.
+   - **Template**: Archivos HTML con placeholders dinámicos como `{{ total }}` y bucles `{% for %}`.
+   - **View**: Lógica de Python en `views.py` que solicita datos al modelo y retorna la respuesta renderizada al cliente.
+3. **El Principio DRY**: Observando la herencia de templates donde las páginas secundarias extienden de `base.html` con `{% extends "base.html" %}`, heredando todo el diseño web y la barra de navegación sin duplicar código.
+4. **ORM v/s SQL**: Observando en el visor dinámico de la página de base de datos cómo una línea compacta en Python se traduce de forma transparente a una instrucción SQL compleja.

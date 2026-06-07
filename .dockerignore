@@ -1,0 +1,24 @@
+# Excluir entorno virtual local
+venv/
+.venv/
+
+# Caché de Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Base de datos local (evita sobreescribir la del contenedor)
+db.sqlite3
+
+# Git
+.git/
+.gitignore
+
+# Directorios de configuración del asistente y editores
+.gemini/
+brain/
+scratch/
+.idea/
+.vscode/
+.DS_Store

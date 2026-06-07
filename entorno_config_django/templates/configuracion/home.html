@@ -1,15 +1,121 @@
 {% extends "base.html" %}
 
-{% block title %}Inicio | Configuración{% endblock %}
-{% block h1 %}Inicio{% endblock %}
+{% block title %}Inicio | Introducción a Django{% endblock %}
+{% block h1 %}Introducción a Django{% endblock %}
+{% block subtitle %}Descubre las características fundamentales de Django para el desarrollo de aplicaciones empresariales.{% endblock %}
 
 {% block content %}
+<!-- Alerta de bienvenida educativa -->
+<div class="alert">
+  <span class="alert-icon">💡</span>
+  <div class="alert-content">
+    <p><strong>¡Bienvenido a la Lección Interactiva de Django!</strong></p>
+    <p>Esta plataforma ha sido diseñada para enseñarte de forma práctica y visual los conceptos clave del framework. Navega por las secciones usando el menú superior.</p>
+  </div>
+</div>
+
+<!-- Grid de Pilares de Django -->
+<div class="grid">
+  <!-- Card 1: ¿Qué es Django? -->
   <div class="card">
-    <p><strong>{{ titulo }}</strong></p>
-    <p class="muted">Rutas:</p>
-    <ul>
-      <li><code>/entorno/</code></li>
-      <li><code>/db/</code></li>
+    <div class="card-title">
+      <span class="icon">🚀</span> ¿Qué es Django?
+    </div>
+    <p>Es un framework web de alto nivel escrito en Python que fomenta un desarrollo rápido y un diseño limpio y pragmático.</p>
+    <p style="margin-top: 10px; font-size: 0.9rem;" class="text-secondary">
+      Django sigue la filosofía <strong>"Batteries Included"</strong> (Baterías Incluidas), proporcionando de fábrica casi todo lo necesario para aplicaciones empresariales listas para producción: autenticación, ORM, enrutamiento, seguridad y panel de administración.
+    </p>
+  </div>
+
+  <!-- Card 2: ¿Por qué usar Django? -->
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">🎯</span> ¿Por qué elegirlo?
+    </div>
+    <ul style="margin-left: 18px; font-size: 0.9rem; color: var(--text-secondary);">
+      <li><strong>Velocidad de Desarrollo:</strong> Diseñado para llevar aplicaciones desde el concepto a la producción en el menor tiempo posible.</li>
+      <li><strong>Seguridad por Defecto:</strong> Protege de forma automática contra ataques SQL Injection, XSS, CSRF y Clickjacking.</li>
+      <li><strong>Escalabilidad:</strong> Utilizado por las empresas más grandes del mundo (Instagram, Pinterest, Disqus) por su capacidad para manejar cargas masivas de datos.</li>
     </ul>
   </div>
+
+  <!-- Card 3: Desarrollo v/s Producción -->
+  <div class="card">
+    <div class="card-title">
+      <span class="icon">⚙️</span> Desarrollo v/s Producción
+    </div>
+    <p>El entorno de Django es altamente flexible y seguro. Diferencia claramente las configuraciones de desarrollo y producción:</p>
+    <div style="margin-top: 8px; font-family: var(--font-mono); font-size: 0.8rem; background: #0b0f19; padding: 10px; border-radius: 6px;">
+      <span style="color: #ef4444;">DEBUG = True</span> (Desarrollo: muestra errores detallados)<br>
+      <span style="color: #10b981;">DEBUG = False</span> (Producción: oculta detalles técnicos)<br>
+      <span>ALLOWED_HOSTS = ['midominio.com']</span>
+    </div>
+  </div>
+</div>
+
+<!-- Sección Intermedia: Arquitectura Web y MTV -->
+<div class="info-section">
+  <h2><span class="icon">🏗️</span> Arquitectura de Django: El Patrón MTV</h2>
+  <p style="color: var(--text-secondary); margin-bottom: 20px;">
+    Aunque comúnmente se le asocia con el clásico <strong>MVC (Modelo-Vista-Controlador)</strong>, Django implementa una variante denominada <strong>MTV (Modelo-Template-Vista)</strong>. En esta arquitectura, el framework asume el rol del controlador.
+  </p>
+
+  <div class="concept-grid">
+    <!-- El Modelo -->
+    <div class="concept-card">
+      <h3>📁 El Modelo (M)</h3>
+      <p>Es la capa de acceso a los datos. Define la estructura de tu base de datos mediante clases de Python, abstrayéndote de escribir SQL directamente gracias al potente ORM (Object-Relational Mapping) de Django.</p>
+    </div>
+
+    <!-- La Vista -->
+    <div class="concept-card">
+      <h3>🧠 La Vista (V)</h3>
+      <p>Representa el controlador lógico de la aplicación. Se encarga de procesar la solicitud del usuario (request), interactuar con el Modelo para obtener los datos y retornar una respuesta (normalmente renderizando un Template).</p>
+    </div>
+
+    <!-- El Template -->
+    <div class="concept-card">
+      <h3>🎨 El Template (T)</h3>
+      <p>Es la capa de presentación. Archivos HTML enriquecidos con el motor de plantillas de Django (DTL), que permite inyectar datos dinámicos provenientes de la vista usando bucles, condiciones y filtros avanzados.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Sección: Principio DRY y Enrutador -->
+<div class="info-section" style="margin-top: 30px;">
+  <div class="grid">
+    <div class="card">
+      <div class="card-title">
+        <span class="icon">⚡</span> El Principio DRY (Don't Repeat Yourself)
+      </div>
+      <p>El principio <strong>"No te repitas"</strong> está en el corazón de Django. Su objetivo es reducir la duplicación de información y código de todo tipo:</p>
+      <ul style="margin-left: 18px; margin-top: 10px; font-size: 0.9rem; color: var(--text-secondary);">
+        <li><strong>Herencia de Componentes:</strong> La posibilidad de heredar plantillas HTML (como <code>base.html</code>) evita copiar cabeceras, menús y pies de página.</li>
+        <li><strong>Modelos Únicos:</strong> Defines tus datos una sola vez en <code>models.py</code> y Django crea las tablas, formularios de admin y consultas automáticamente.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span class="icon">🛣️</span> El Enrutador de Django (URLs)
+      </div>
+      <p>El enrutador actúa como el mapa de tu sitio. Mapea expresiones o patrones de URL directamente a funciones de vista de Python.</p>
+      <p style="margin-top: 10px; font-size: 0.9rem; color: var(--text-secondary);">
+        Cuando llega una petición web, Django analiza el archivo <code>urls.py</code> principal del proyecto, delega a las aplicaciones y ejecuta la vista correspondiente en milisegundos.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Pie de página informativo -->
+<div class="alert" style="background: rgba(6, 182, 212, 0.1); border-left-color: var(--accent-teal);">
+  <span class="alert-icon" style="color: var(--accent-teal);">🛠️</span>
+  <div class="alert-content">
+    <p><strong>Configuración de este Proyecto:</strong></p>
+    <p style="font-size: 0.9rem;">
+      Estás navegando en un servidor Django en desarrollo. La versión de la aplicación registrada es <code>v{{ version_app }}</code>. 
+      Actualmente el modo de depuración está activo: <code>DEBUG = {{ debug }}</code>.
+    </p>
+  </div>
+</div>
 {% endblock %}
